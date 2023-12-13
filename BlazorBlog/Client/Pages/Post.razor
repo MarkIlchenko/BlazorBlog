@@ -1,0 +1,41 @@
+﻿@page "/posts/{url}"
+@inject BlazorBlog.Client.Services.IBlogService BlogService
+
+<style>
+    .post-img {
+        height: 300px;
+        background-size: cover;
+        background-position: center;
+        border-radius: 6px;
+        margin-bottom: 10px;
+    }
+</style>
+
+@if (CurrentPost == null)
+{
+    <span>Getting that blog post from the service...</span>
+}
+else
+{
+    <div class="post-img" style="background-image: url('@(CurrentPost.Image ?? placeholderImage)');" />
+
+    <h3>@CurrentPost.Title</h3>
+
+    <div>
+        @CurrentPost.Content
+    </div>
+}
+
+@code {
+    private BlazorBlog.Shared.BlogPost CurrentPost;
+
+    [Parameter]
+    public string Url { get; set; }
+
+    string placeholderImage = "https://via.placeholder.com/1060x300";
+
+    protected override async Task OnInitializedAsync()
+    {
+        CurrentPost = await BlogService.GetBlogPostByUrl(Url);
+    }
+}
